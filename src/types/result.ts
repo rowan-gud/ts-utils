@@ -1,3 +1,5 @@
+import { asError } from './error';
+
 export interface OkResult<T> {
   readonly ok: true;
   readonly data: T;
@@ -87,4 +89,22 @@ export function match<Data, Err, Res>(
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return matcher.err((res as any).error);
+}
+
+export function trySync<Data>(fn: () => Data): Result<Data, Error> {
+  try {
+    return ok(fn());
+  } catch (e) {
+    return err(asError(e));
+  }
+}
+
+export async function tryAsync<Data>(
+  fn: () => Promise<Data>,
+): Promise<Result<Data, Error>> {
+  try {
+    return ok(await fn());
+  } catch (e) {
+    return err(asError(e));
+  }
 }
