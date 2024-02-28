@@ -7,9 +7,11 @@ export function asError(input: unknown): Error {
     return new Error(input ?? undefined);
   }
 
-  if (typeof input === 'number' || typeof input === 'symbol') {
-    return new Error(String(input));
+  const str = String(input);
+
+  if (str.includes('[object Object]')) {
+    return new Error(JSON.stringify(input));
   }
 
-  return new Error(JSON.stringify(input));
+  return new Error(str);
 }

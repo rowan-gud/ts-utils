@@ -1,3 +1,5 @@
+import { asError } from './error';
+
 export interface OkResult<T> {
   readonly ok: true;
   readonly data: T;
@@ -51,7 +53,11 @@ export function mapErr<Err, NewErr>(
 
 export function unwrap<Data, Err>(res: Result<Data, Err>): Data {
   if (!res.ok) {
-    throw new Error('Attempt to unwrap result which is not ok');
+    if ('error' in res) {
+      throw asError(res.error);
+    }
+
+    throw new Error('Attempt to unwrap option');
   }
 
   return res.data;
