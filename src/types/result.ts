@@ -1,3 +1,5 @@
+import { asError } from './error';
+
 export interface OkResult<T> {
   readonly ok: true;
   readonly data: T;
@@ -26,32 +28,36 @@ export function err<T>(error: T): ErrResult<T> {
   } as any;
 }
 
-export function mapData<Data, NewData, Err>(
-  res: Result<Data, Err>,
-  transformer: (data: Data) => NewData,
-): Result<NewData, Err> {
-  if (res.ok) {
-    return ok(transformer(res.data));
-  }
+export function mapData<Data, NewData>(transformer: (data: Data) => NewData) {
+  return <Err>(res: Result<Data, Err>): Result<NewData, Err> => {
+    if (res.ok) {
+      return ok(transformer(res.data));
+    }
 
-  return res;
+    return res;
+  };
 }
 
-export function mapErr<Data, Err, NewErr>(
-  res: Result<Data, Err>,
+export function mapErr<Err, NewErr>(
   transformer: Err extends undefined ? () => NewErr : (error: Err) => NewErr,
-): Result<Data, NewErr> {
-  if (!res.ok) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return err(transformer((res as any).error));
-  }
+) {
+  return <Data>(res: Result<Data, Err>): Result<Data, NewErr> => {
+    if (!res.ok) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return err(transformer((res as any).error));
+    }
 
-  return res;
+    return res;
+  };
 }
 
 export function unwrap<Data, Err>(res: Result<Data, Err>): Data {
   if (!res.ok) {
-    throw new Error('Attempt to unwrap result which is not ok');
+    if ('error' in res) {
+      throw asError(res.error);
+    }
+
+    throw new Error('Attempt to unwrap option');
   }
 
   return res.data;
@@ -77,14 +83,34 @@ export function expect<Data, Err>(
   return res.data;
 }
 
-export function match<Data, Err, Res>(
-  res: Result<Data, Err>,
-  matcher: { ok: (data: Data) => Res; err: (e: Err) => Res },
-): Res {
-  if (res.ok) {
-    return matcher.ok(res.data);
-  }
+export function match<Data, Err, Res>(matcher: {
+  ok: (data: Data) => Res;
+  err: (err: Err) => Res;
+}) {
+  return (res: Result<Data, Err>): Res => {
+    if (res.ok) {
+      return matcher.ok(res.data);
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  return matcher.err((res as any).error);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return matcher.err((res as any).error);
+  };
+}
+
+export function trySync<Data>(fn: () => Data): Result<Data, unknown> {
+  try {
+    return ok(fn());
+  } catch (e) {
+    return err(e);
+  }
+}
+
+export async function tryAsync<Data>(
+  fn: () => Promise<Data>,
+): Promise<Result<Data, unknown>> {
+  try {
+    return ok(await fn());
+  } catch (e) {
+    return err(e);
+  }
 }
