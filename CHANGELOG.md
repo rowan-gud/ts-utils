@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/rowan-gud/ts-utils/compare/v1.0.0-rc.3...v1.0.0) (2024-02-28)
+
+
+### Miscellaneous Chores
+
+* bump 1.0.0 ([89f556b](https://github.com/rowan-gud/ts-utils/commit/89f556bcbf646d0f0f1dedccb2e5f152d3e4d13b))
+
 ## [1.0.0-rc.3](https://github.com/rowan-gud/ts-utils/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2024-02-28)
 
 
