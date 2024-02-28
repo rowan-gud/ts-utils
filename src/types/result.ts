@@ -26,7 +26,7 @@ export function err<T>(error: T): ErrResult<T> {
   } as any;
 }
 
-export function map<Data, NewData, Err>(
+export function mapData<Data, NewData, Err>(
   res: Result<Data, Err>,
   transformer: (data: Data) => NewData,
 ): Result<NewData, Err> {
