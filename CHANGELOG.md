@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.3](https://github.com/rowan-gud/ts-utils/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2024-02-28)
+
+
+### Miscellaneous Chores
+
+* **package:** update package name ([#5](https://github.com/rowan-gud/ts-utils/issues/5)) ([4c55356](https://github.com/rowan-gud/ts-utils/commit/4c55356ef322866812c0230ef901bd12da5ba7ec))
+
 ## [1.0.0-rc.2](https://github.com/rowan-gud/ts-utils/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2024-02-28)
 
 
